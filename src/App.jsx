@@ -89,7 +89,7 @@ function AppContent() {
           }
         }
       },
-      onError: function(error) {
+onError: function(error) {
         console.error("Authentication failed:", error);
         setIsInitialized(true);
         setIsAuthenticated(false);

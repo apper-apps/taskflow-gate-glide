@@ -5,15 +5,35 @@ import { AuthContext } from '@/App';
 function Login() {
   const { isInitialized } = useContext(AuthContext);
   
-  useEffect(() => {
+useEffect(() => {
+    // Suppress ResizeObserver errors
+    const handleResizeObserverError = (e) => {
+      if (e.message === 'ResizeObserver loop completed with undelivered notifications.') {
+        e.stopImmediatePropagation();
+      }
+    };
+    
+    window.addEventListener('error', handleResizeObserverError);
+    
     if (isInitialized) {
       // Show login UI in this component
       const { ApperUI } = window.ApperSDK;
       ApperUI.showLogin("#authentication");
     }
+    
+    return () => {
+      window.removeEventListener('error', handleResizeObserverError);
+      // Cleanup ApperUI if it exists
+      if (isInitialized && window.ApperSDK) {
+        const authElement = document.getElementById('authentication');
+        if (authElement) {
+          authElement.innerHTML = '';
+        }
+      }
+    };
   }, [isInitialized]);
   
-  return (
+return (
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="w-full max-w-md space-y-8 p-8 bg-white rounded-lg shadow-md">
         <div className="flex flex-col gap-6 items-center justify-center">
@@ -29,7 +49,7 @@ function Login() {
             </div>
           </div>
         </div>
-        <div id="authentication" />
+        <div id="authentication" className="min-h-[300px]" />
         <div className="text-center mt-4">
           <p className="text-sm text-gray-600">
             Don't have an account?{' '}
