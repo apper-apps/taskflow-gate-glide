@@ -1,0 +1,42 @@
+[
+  {
+    "Id": 1,
+    "name": "Marketing Campaign",
+    "color": "#FF6B6B",
+    "order": 0,
+    "taskCount": 0,
+    "isArchived": false
+  },
+  {
+    "Id": 2,
+    "name": "Web Development",
+    "color": "#4A9EFF",
+    "order": 1,
+    "taskCount": 0,
+    "isArchived": false
+  },
+  {
+    "Id": 3,
+    "name": "HR Operations",
+    "color": "#4ECB71",
+    "order": 2,
+    "taskCount": 0,
+    "isArchived": false
+  },
+  {
+    "Id": 4,
+    "name": "Product Design",
+    "color": "#FFB84D",
+    "order": 3,
+    "taskCount": 0,
+    "isArchived": false
+  },
+  {
+    "Id": 5,
+    "name": "Client Relations",
+    "color": "#9B59B6",
+    "order": 4,
+    "taskCount": 0,
+    "isArchived": false
+  }
+]
