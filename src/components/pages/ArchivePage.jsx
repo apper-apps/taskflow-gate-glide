@@ -138,14 +138,14 @@ const ArchivePage = () => {
                   <h3 className="font-medium text-gray-500 line-through truncate">
                     {task.title}
                   </h3>
-                  {task.projectId && (
+{task.projectId && (
                     <div className="flex items-center gap-1 flex-shrink-0">
                       <div 
                         className="w-3 h-3 rounded-full"
                         style={{ backgroundColor: projects.find(p => p.Id === task.projectId)?.color }}
                       />
                       <span className="text-xs text-gray-500">
-                        {projects.find(p => p.Id === task.projectId)?.name}
+                        {projects.find(p => p.Id === task.projectId)?.Name}
                       </span>
                     </div>
                   )}

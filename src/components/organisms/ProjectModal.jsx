@@ -17,9 +17,9 @@ const ProjectModal = ({ project, onSave, onClose }) => {
   ];
   
   useEffect(() => {
-    if (project) {
+if (project) {
       setFormData({
-        name: project.name || "",
+        name: project.Name || "",
         color: project.color || "#5B4AE4"
       });
     }

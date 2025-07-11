@@ -18,7 +18,7 @@ const TaskModal = ({ task, projects, onSave, onClose }) => {
   
   useEffect(() => {
     if (task) {
-      setFormData({
+setFormData({
         title: task.title || "",
         description: task.description || "",
         projectId: task.projectId || "",
@@ -103,14 +103,14 @@ const TaskModal = ({ task, projects, onSave, onClose }) => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Project
                 </label>
-                <Select
+<Select
                   value={formData.projectId}
                   onChange={(e) => setFormData(prev => ({ ...prev, projectId: e.target.value }))}
                 >
                   <option value="">No Project</option>
                   {projects.map(project => (
                     <option key={project.Id} value={project.Id}>
-                      {project.name}
+                      {project.Name}
                     </option>
                   ))}
                 </Select>

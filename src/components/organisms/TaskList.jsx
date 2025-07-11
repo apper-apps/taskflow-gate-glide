@@ -3,7 +3,7 @@ import TaskItem from "@/components/molecules/TaskItem";
 import Empty from "@/components/ui/Empty";
 
 const TaskList = ({ tasks, projects, onToggleComplete, onEditTask, onDeleteTask, emptyMessage }) => {
-  const getTaskProject = (taskProjectId) => {
+const getTaskProject = (taskProjectId) => {
     return projects.find(p => p.Id === taskProjectId);
   };
   

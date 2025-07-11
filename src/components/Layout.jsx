@@ -1,17 +1,18 @@
-import { useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { motion } from "framer-motion";
-import { isToday, isAfter, startOfDay } from "date-fns";
+import { isAfter, isToday, startOfDay } from "date-fns";
+import { toast } from "react-toastify";
+import { AuthContext } from "@/App";
+import ApperIcon from "@/components/ApperIcon";
 import Sidebar from "@/components/organisms/Sidebar";
 import MobileSidebar from "@/components/organisms/MobileSidebar";
 import ProjectModal from "@/components/organisms/ProjectModal";
 import Button from "@/components/atoms/Button";
-import ApperIcon from "@/components/ApperIcon";
-import { taskService } from "@/services/api/taskService";
 import { projectService } from "@/services/api/projectService";
-import { toast } from "react-toastify";
-
+import { taskService } from "@/services/api/taskService";
 const Layout = () => {
+  const { logout } = useContext(AuthContext);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [projects, setProjects] = useState([]);
@@ -22,7 +23,6 @@ const Layout = () => {
     archive: 0,
     projects: {}
   });
-  
   useEffect(() => {
     loadData();
   }, []);
@@ -53,7 +53,7 @@ const Layout = () => {
         projects: {}
       };
       
-      // Calculate project task counts
+// Calculate project task counts
       projectsData.forEach(project => {
         counts.projects[project.Id] = tasksData.filter(t => 
           t.projectId === project.Id && !t.completed
@@ -105,7 +105,7 @@ const Layout = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Mobile Header */}
         <div className="lg:hidden flex items-center justify-between p-4 bg-white border-b border-gray-200">
-          <Button
+<Button
             variant="ghost"
             size="sm"
             onClick={() => setIsMobileSidebarOpen(true)}
@@ -119,9 +119,15 @@ const Layout = () => {
             </div>
             <h1 className="text-lg font-bold font-display text-gray-900">TaskFlow</h1>
           </div>
-          <div className="w-8" />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={logout}
+            className="h-8 px-3 text-gray-600 hover:text-gray-900"
+          >
+            <ApperIcon name="LogOut" className="h-4 w-4" />
+          </Button>
         </div>
-        
         {/* Page Content */}
         <main className="flex-1 overflow-y-auto">
           <motion.div

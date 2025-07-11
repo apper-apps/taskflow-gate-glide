@@ -149,9 +149,9 @@ const ProjectPage = () => {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <div className="flex items-center gap-3 mb-6">
+<div className="flex items-center gap-3 mb-6">
           <ProjectDot color={project.color} />
-          <h1 className="text-3xl font-bold font-display text-gray-900">{project.name}</h1>
+          <h1 className="text-3xl font-bold font-display text-gray-900">{project.Name}</h1>
           <span className="text-sm text-gray-500">({tasks.length} tasks)</span>
         </div>
         
@@ -164,7 +164,7 @@ const ProjectPage = () => {
         onToggleComplete={handleToggleComplete}
         onEditTask={handleEditTask}
         onDeleteTask={handleDeleteTask}
-        emptyMessage={`No tasks in ${project.name}. Add a task to get started!`}
+emptyMessage={`No tasks in ${project.Name}. Add a task to get started!`}
       />
       
       {showTaskModal && (

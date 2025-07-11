@@ -1,60 +1,176 @@
-import mockProjects from "@/services/mockData/projects.json";
-
 class ProjectService {
   constructor() {
-    this.projects = [...mockProjects];
+    this.apperClient = null;
+    this.initializeClient();
+  }
+
+  initializeClient() {
+    const { ApperClient } = window.ApperSDK;
+    this.apperClient = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    });
   }
 
   async getAll() {
-    await this.delay();
-    return [...this.projects];
+    try {
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "color" } },
+          { field: { Name: "order" } },
+          { field: { Name: "task_count" } },
+          { field: { Name: "is_archived" } }
+        ],
+        orderBy: [
+          { fieldName: "order", sorttype: "ASC" }
+        ]
+      };
+
+      const response = await this.apperClient.fetchRecords("project", params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      return response.data || [];
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+      throw error;
+    }
   }
 
   async getById(id) {
-    await this.delay();
-    const project = this.projects.find(p => p.Id === parseInt(id));
-    if (!project) throw new Error("Project not found");
-    return { ...project };
+    try {
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "color" } },
+          { field: { Name: "order" } },
+          { field: { Name: "task_count" } },
+          { field: { Name: "is_archived" } }
+        ]
+      };
+
+      const response = await this.apperClient.getRecordById("project", parseInt(id), params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (!response.data) {
+        throw new Error("Project not found");
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching project:", error);
+      throw error;
+    }
   }
 
   async create(projectData) {
-    await this.delay();
-    const newProject = {
-      Id: this.getNextId(),
-      name: projectData.name,
-      color: projectData.color || "#5B4AE4",
-      order: this.projects.length,
-      taskCount: 0,
-      isArchived: false
-    };
-    this.projects.push(newProject);
-    return { ...newProject };
+    try {
+      const params = {
+        records: [{
+          Name: projectData.name,
+          color: projectData.color || "#5B4AE4",
+          order: 0,
+          task_count: 0,
+          is_archived: false
+        }]
+      };
+
+      const response = await this.apperClient.createRecord("project", params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success);
+        const failedRecords = response.results.filter(result => !result.success);
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to create ${failedRecords.length} records:${JSON.stringify(failedRecords)}`);
+          throw new Error("Failed to create project");
+        }
+        
+        return successfulRecords[0]?.data;
+      }
+    } catch (error) {
+      console.error("Error creating project:", error);
+      throw error;
+    }
   }
 
   async update(id, updateData) {
-    await this.delay();
-    const index = this.projects.findIndex(p => p.Id === parseInt(id));
-    if (index === -1) throw new Error("Project not found");
-    
-    this.projects[index] = { ...this.projects[index], ...updateData };
-    return { ...this.projects[index] };
+    try {
+      const params = {
+        records: [{
+          Id: parseInt(id),
+          ...(updateData.name && { Name: updateData.name }),
+          ...(updateData.color && { color: updateData.color }),
+          ...(updateData.order !== undefined && { order: updateData.order }),
+          ...(updateData.task_count !== undefined && { task_count: updateData.task_count }),
+          ...(updateData.is_archived !== undefined && { is_archived: updateData.is_archived })
+        }]
+      };
+
+      const response = await this.apperClient.updateRecord("project", params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const successfulUpdates = response.results.filter(result => result.success);
+        const failedUpdates = response.results.filter(result => !result.success);
+        
+        if (failedUpdates.length > 0) {
+          console.error(`Failed to update ${failedUpdates.length} records:${JSON.stringify(failedUpdates)}`);
+          throw new Error("Failed to update project");
+        }
+        
+        return successfulUpdates[0]?.data;
+      }
+    } catch (error) {
+      console.error("Error updating project:", error);
+      throw error;
+    }
   }
 
   async delete(id) {
-    await this.delay();
-    const index = this.projects.findIndex(p => p.Id === parseInt(id));
-    if (index === -1) throw new Error("Project not found");
-    
-    this.projects.splice(index, 1);
-    return true;
-  }
+    try {
+      const params = {
+        RecordIds: [parseInt(id)]
+      };
 
-  getNextId() {
-    return Math.max(...this.projects.map(p => p.Id), 0) + 1;
-  }
+      const response = await this.apperClient.deleteRecord("project", params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
 
-  async delay() {
-    await new Promise(resolve => setTimeout(resolve, 300));
+      if (response.results) {
+        const failedDeletions = response.results.filter(result => !result.success);
+        
+        if (failedDeletions.length > 0) {
+          console.error(`Failed to delete ${failedDeletions.length} records:${JSON.stringify(failedDeletions)}`);
+          throw new Error("Failed to delete project");
+        }
+        
+        return true;
+      }
+    } catch (error) {
+      console.error("Error deleting project:", error);
+      throw error;
+    }
   }
 }
 
